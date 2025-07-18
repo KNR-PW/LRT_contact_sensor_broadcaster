@@ -1,0 +1,25 @@
+contact_sensor_broadcaster:
+  frame_ids: {
+    type: string_array,
+    description: "Sensor's frame_id in which values are published.",
+    validation: {
+      unique<>: null,
+      not_empty<>: null,
+    }
+  }
+  sensor_names: {
+    type: string_array,
+    description: "Name of the sensors used as prefix for interfaces ``<sensor_name>/<interface_postfix>``",
+    validation: {
+      unique<>: null,
+      not_empty<>: null,
+    }
+  }
+  interface_postfix: {
+    type: string,
+    default_value: "contact",
+    description: "Optional: name of the contact state interface
+    If not used, interface name will be ``contact``",
+  }
+
+    

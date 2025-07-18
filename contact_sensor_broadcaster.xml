@@ -1,0 +1,8 @@
+<library path="contact_sensor_broadcaster">
+  <class name="contact_sensor_broadcaster/ContactSensorBroadcaster"
+         type="contact_sensor_broadcaster::ContactSensorBroadcaster" base_class_type="controller_interface::ControllerInterface">
+  <description>
+    This controller publishes the readings of contact sensor interfaces as contact_msgs/Contact messages.
+  </description>
+  </class>
+</library>
