@@ -42,15 +42,7 @@ public:
     contact_flag_ = false;
   }
 
-  /// Constructor for contact sensor with custom interface names.
-  /**
-   * Constructor for contact sensor with custom interface names or FTS with less then six measurement axes,
-   * e.g., 1D and 2D force load cells.
-   * For non existing axes interface is empty string, i.e., ("");
-   *
-   * The name should be in the following order:
-   *   force X, force Y, force Z, torque X, torque Y, torque Z.
-   */
+  /// Constructor for contact sensor with custom interface postfix.
   ContactSensor(const std::string & name, const std::string & interface_postfix)
   : SemanticComponentInterface(name, 1)
   {
@@ -63,9 +55,7 @@ public:
 
   /// Return contact flag.
   /**
-   * 
-   *
-   * \return contact flag as bool
+   * \return contact flag as boolean
    */
   bool get_contact_flag()
   {
@@ -80,11 +70,11 @@ public:
     return contact_flag_;
   }
 
-  /// Return Contact message with forces and torques.
+  /// Return Contact message with contact flag.
   /**
-   * Constructs and return a contact message from the current values.
+   * Return a contact message with current bollean value.
    *
-   * \return contact message from values WITHOUT HEADER;
+   * \return contact message with changed boolean (header needs to be changed in boradcaster).
    */
   bool get_values_as_message(contact_msgs::msg::Contact & message)
   {
@@ -98,7 +88,7 @@ public:
 
 protected:
   
-  /// Bool that represent it there is or is not contact
+  /// Boolean that represent it there is or is not contact
   bool contact_flag_;
 };
 
