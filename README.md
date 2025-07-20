@@ -1,2 +1,2 @@
-# LRT_contact_sensor_broadcaster
+# LRT_contact_sensors_broadcaster
 Controller to publish state of contact sensors.

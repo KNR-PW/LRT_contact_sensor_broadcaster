@@ -1,14 +1,14 @@
-#include "contact_sensor_broadcaster/contact_sensor_broadcaster.hpp"
+#include "contact_sensors_broadcaster/contact_sensors_broadcaster.hpp"
 
 
-namespace contact_sensor_broadcaster
+namespace contact_sensors_broadcaster
 {
-ContactSensorBroadcaster::ContactSensorBroadcaster()
+ContactSensorsBroadcaster::ContactSensorsBroadcaster()
 : controller_interface::ControllerInterface()
 {
 }
 
-controller_interface::CallbackReturn ContactSensorBroadcaster::on_init()
+controller_interface::CallbackReturn ContactSensorsBroadcaster::on_init()
 {
   try
   {
@@ -24,7 +24,7 @@ controller_interface::CallbackReturn ContactSensorBroadcaster::on_init()
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn ContactSensorBroadcaster::on_configure(
+controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   params_ = param_listener_->get_params();
@@ -102,7 +102,7 @@ controller_interface::CallbackReturn ContactSensorBroadcaster::on_configure(
 }
 
 controller_interface::InterfaceConfiguration
-ContactSensorBroadcaster::command_interface_configuration() const
+ContactSensorsBroadcaster::command_interface_configuration() const
 {
   controller_interface::InterfaceConfiguration command_interfaces_config;
   command_interfaces_config.type = controller_interface::interface_configuration_type::NONE;
@@ -110,7 +110,7 @@ ContactSensorBroadcaster::command_interface_configuration() const
 }
 
 controller_interface::InterfaceConfiguration
-ContactSensorBroadcaster::state_interface_configuration() const
+ContactSensorsBroadcaster::state_interface_configuration() const
 {
   controller_interface::InterfaceConfiguration state_interfaces_config;
   state_interfaces_config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
@@ -125,7 +125,7 @@ ContactSensorBroadcaster::state_interface_configuration() const
   return state_interfaces_config;
 }
 
-controller_interface::CallbackReturn ContactSensorBroadcaster::on_activate(
+controller_interface::CallbackReturn ContactSensorsBroadcaster::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   for(const auto& contact_sensor: contact_sensors_)
@@ -135,7 +135,7 @@ controller_interface::CallbackReturn ContactSensorBroadcaster::on_activate(
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn ContactSensorBroadcaster::on_deactivate(
+controller_interface::CallbackReturn ContactSensorsBroadcaster::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   for(const auto& contact_sensor: contact_sensors_)
@@ -145,7 +145,7 @@ controller_interface::CallbackReturn ContactSensorBroadcaster::on_deactivate(
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::return_type ContactSensorBroadcaster::update(
+controller_interface::return_type ContactSensorsBroadcaster::update(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
 {
   for(size_t i = 0; i < sensor_number_; ++i)
@@ -161,10 +161,10 @@ controller_interface::return_type ContactSensorBroadcaster::update(
   return controller_interface::return_type::OK;
 }
 
-}  // namespace contact_sensor_broadcaster
+}  // namespace contact_sensors_broadcaster
 
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  contact_sensor_broadcaster::ContactSensorBroadcaster,
+  contact_sensors_broadcaster::ContactSensorsBroadcaster,
   controller_interface::ControllerInterface)

@@ -1,4 +1,4 @@
-contact_sensor_broadcaster:
+contact_sensors_broadcaster:
   frame_ids: {
     type: string_array,
     description: "Sensor's frame_id in which values are published.",

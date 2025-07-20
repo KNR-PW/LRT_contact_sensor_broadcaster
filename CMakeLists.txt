@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(contact_sensor_broadcaster)
+project(contact_sensors_broadcaster)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -27,31 +27,31 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-generate_parameter_library(contact_sensor_broadcaster_parameters
-  src/contact_sensor_broadcaster_parameters.yaml
+generate_parameter_library(contact_sensors_broadcaster_parameters
+  src/contact_sensors_broadcaster_parameters.yaml
 )
 
-add_library(contact_sensor_broadcaster SHARED
-  src/contact_sensor_broadcaster.cpp
+add_library(contact_sensors_broadcaster SHARED
+  src/contact_sensors_broadcaster.cpp
 )
 
-target_compile_features(contact_sensor_broadcaster PUBLIC cxx_std_17)
-target_include_directories(contact_sensor_broadcaster PUBLIC
+target_compile_features(contact_sensors_broadcaster PUBLIC cxx_std_17)
+target_include_directories(contact_sensors_broadcaster PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/contact_sensor_broadcaster>
+  $<INSTALL_INTERFACE:include/contact_sensors_broadcaster>
 )
-target_link_libraries(contact_sensor_broadcaster PUBLIC
-  contact_sensor_broadcaster_parameters
+target_link_libraries(contact_sensors_broadcaster PUBLIC
+  contact_sensors_broadcaster_parameters
 )
-ament_target_dependencies(contact_sensor_broadcaster PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+ament_target_dependencies(contact_sensors_broadcaster PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
-target_compile_definitions(contact_sensor_broadcaster PRIVATE "CONTACT_SENSOR_BROADCASTER_BUILDING_DLL")
+target_compile_definitions(contact_sensors_broadcaster PRIVATE "contact_sensors_broadcaster_BUILDING_DLL")
 
 
 pluginlib_export_plugin_description_file(
-  controller_interface contact_sensor_broadcaster.xml)
+  controller_interface contact_sensors_broadcaster.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -67,18 +67,18 @@ endif()
 
 install(
   DIRECTORY include/
-  DESTINATION include/contact_sensor_broadcaster
+  DESTINATION include/contact_sensors_broadcaster
 )
 install(
   TARGETS
-    contact_sensor_broadcaster
-    contact_sensor_broadcaster_parameters
-  EXPORT export_contact_sensor_broadcaster
+    contact_sensors_broadcaster
+    contact_sensors_broadcaster_parameters
+  EXPORT export_contact_sensors_broadcaster
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
 
-ament_export_targets(export_contact_sensor_broadcaster HAS_LIBRARY_TARGET)
+ament_export_targets(export_contact_sensors_broadcaster HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
