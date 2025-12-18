@@ -70,32 +70,27 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
     contact_sensors_.push_back(std::move(sensor_ptr));
   }
 
-  for(size_t i = 0; i < sensor_number_; ++i)
+  try
   {
-    try
-    {
-      // register contact sensor data publishers
-      StatePublisher::SharedPtr sensor_state_publisher = get_node()->create_publisher<contact_msgs::msg::Contact>(
-        "~/" + params_.sensor_names[i], rclcpp::SystemDefaultsQoS());
-      std::unique_ptr<RealTimeStatePublisher> realtime_publisher = std::make_unique<RealTimeStatePublisher>(sensor_state_publisher);
-      sensor_state_publishers_.push_back(sensor_state_publisher);
-      realtime_publishers_.push_back(std::move(realtime_publisher));
-    }
-    catch (const std::exception & e)
-    {
-      fprintf(
-        stderr, "Exception thrown during publisher creation at configure stage with message : %s \n",
-        e.what());
-      return controller_interface::CallbackReturn::ERROR;
-    }
+    // register contact sensor data publisher
+    sensor_state_publisher_ = get_node()->create_publisher<contact_msgs::msg::Contacts>(
+      "~/contact_states", rclcpp::SystemDefaultsQoS());
+    realtime_publisher_ = std::make_unique<RealTimeStatePublisher>(sensor_state_publisher_);
+  }
+  catch (const std::exception & e)
+  {
+    fprintf(
+      stderr, "Exception thrown during publisher creation at configure stage with message : %s \n",
+      e.what());
+    return controller_interface::CallbackReturn::ERROR;
   }
 
+  realtime_publisher_->lock();
   for(size_t i = 0; i < sensor_number_; ++i)
   {
-    realtime_publishers_[i]->lock();
-    realtime_publishers_[i]->msg_.header.frame_id = params_.frame_ids[i];
-    realtime_publishers_[i]->unlock();
+    realtime_publisher_->msg_.contacts[i].header.frame_id = params_.frame_ids[i];
   }
+  realtime_publisher_->unlock();
 
   RCLCPP_DEBUG(get_node()->get_logger(), "configure successful");
   return controller_interface::CallbackReturn::SUCCESS;
@@ -148,19 +143,19 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_deactivate(
 controller_interface::return_type ContactSensorsBroadcaster::update(
   const rclcpp::Time & time, const rclcpp::Duration & /*period*/)
 {
-  for(size_t i = 0; i < sensor_number_; ++i)
+  if (realtime_publisher_ && realtime_publisher_->trylock())
   {
-    if (realtime_publishers_[i] && realtime_publishers_[i]->trylock())
+    for(size_t i = 0; i < sensor_number_; ++i)
     {
-      realtime_publishers_[i]->msg_.header.stamp = time;
-      contact_sensors_[i]->get_values_as_message(realtime_publishers_[i]->msg_);
-      realtime_publishers_[i]->unlockAndPublish();
+      bool newFlag = contact_sensors_[i]->get_contact_flag();
+      realtime_publisher_->msg_.contacts[i].contact = newFlag;
+      realtime_publisher_->msg_.contacts[i].header.stamp = time;
     }
+    realtime_publisher_->unlockAndPublish();
   }
   
   return controller_interface::return_type::OK;
 }
-
 }  // namespace contact_sensors_broadcaster
 
 #include "pluginlib/class_list_macros.hpp"

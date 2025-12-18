@@ -77,7 +77,7 @@ public:
    *
    * \return contact message with changed boolean (header needs to be changed in boradcaster).
    */
-  bool get_values_as_message(contact_msgs::msg::Contact & message)
+  bool get_values_as_message(contact_msgs::msg::Contact& message)
   {
     // call get_contact_flag() to update with the latest value
     get_contact_flag();
