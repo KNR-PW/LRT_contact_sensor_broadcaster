@@ -27,7 +27,7 @@
 #include "controller_interface/controller_interface.hpp"
 #include "contact_sensors_broadcaster/contact_sensors_broadcaster_parameters.hpp"
 #include "contact_sensors_broadcaster/visibility_control.h"
-#include "contact_msgs/msg/contact.hpp"
+#include "contact_msgs/msg/contacts.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "realtime_tools/realtime_publisher.hpp"
@@ -38,30 +38,30 @@ namespace contact_sensors_broadcaster
 class ContactSensorsBroadcaster : public controller_interface::ControllerInterface
 {
 public:
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   ContactSensorsBroadcaster();
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-  contact_sensors_broadcaster_PUBLIC controller_interface::CallbackReturn on_init() override;
+  CONTACT_SENSORS_BROADCASTER_PUBLIC controller_interface::CallbackReturn on_init() override;
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::CallbackReturn on_configure(
     const rclcpp_lifecycle::State & previous_state) override;
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::CallbackReturn on_activate(
     const rclcpp_lifecycle::State & previous_state) override;
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::CallbackReturn on_deactivate(
     const rclcpp_lifecycle::State & previous_state) override;
 
-  contact_sensors_broadcaster_PUBLIC
+  CONTACT_SENSORS_BROADCASTER_PUBLIC
   controller_interface::return_type update(
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
@@ -71,13 +71,13 @@ protected:
 
   size_t sensor_number_;
 
-  using StatePublisher = rclcpp::Publisher<contact_msgs::msg::Contact>;
-  using RealTimeStatePublisher = realtime_tools::RealtimePublisher<contact_msgs::msg::Contact>;
+  using StatePublisher = rclcpp::Publisher<contact_msgs::msg::Contacts>;
+  using RealTimeStatePublisher = realtime_tools::RealtimePublisher<contact_msgs::msg::Contacts>;
   using ContactSensor = std::unique_ptr<semantic_components::ContactSensor>;
   
   std::vector<ContactSensor> contact_sensors_;
-  std::vector<StatePublisher::SharedPtr> sensor_state_publishers_;
-  std::vector<std::unique_ptr<RealTimeStatePublisher>> realtime_publishers_;
+  StatePublisher::SharedPtr sensor_state_publisher_;
+  std::unique_ptr<RealTimeStatePublisher> realtime_publisher_;
 };
 
 }  // namespace contact_sensors_broadcaster

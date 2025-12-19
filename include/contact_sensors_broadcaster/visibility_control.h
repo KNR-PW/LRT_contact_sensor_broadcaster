@@ -25,30 +25,30 @@
 
 #if defined _WIN32 || defined __CYGWIN__
 #ifdef __GNUC__
-#define contact_sensors_broadcaster_EXPORT __attribute__((dllexport))
-#define contact_sensors_broadcaster_IMPORT __attribute__((dllimport))
+#define CONTACT_SENSORS_BROADCASTER_EXPORT __attribute__((dllexport))
+#define CONTACT_SENSORS_BROADCASTER_IMPORT __attribute__((dllimport))
 #else
-#define contact_sensors_broadcaster_EXPORT __declspec(dllexport)
-#define contact_sensors_broadcaster_IMPORT __declspec(dllimport)
+#define CONTACT_SENSORS_BROADCASTER_EXPORT __declspec(dllexport)
+#define CONTACT_SENSORS_BROADCASTER_IMPORT __declspec(dllimport)
 #endif
-#ifdef contact_sensors_broadcaster_BUILDING_DLL
-#define contact_sensors_broadcaster_PUBLIC contact_sensors_broadcaster_EXPORT
+#ifdef CONTACT_SENSORS_BROADCASTER_BUILDING_DLL
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC CONTACT_SENSORS_BROADCASTER_EXPORT
 #else
-#define contact_sensors_broadcaster_PUBLIC contact_sensors_broadcaster_IMPORT
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC CONTACT_SENSORS_BROADCASTER_IMPORT
 #endif
-#define contact_sensors_broadcaster_PUBLIC_TYPE contact_sensors_broadcaster_PUBLIC
-#define contact_sensors_broadcaster_LOCAL
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC_TYPE CONTACT_SENSORS_BROADCASTER_PUBLIC
+#define CONTACT_SENSORS_BROADCASTER_LOCAL
 #else
-#define contact_sensors_broadcaster_EXPORT __attribute__((visibility("default")))
-#define contact_sensors_broadcaster_IMPORT
+#define CONTACT_SENSORS_BROADCASTER_EXPORT __attribute__((visibility("default")))
+#define CONTACT_SENSORS_BROADCASTER_IMPORT
 #if __GNUC__ >= 4
-#define contact_sensors_broadcaster_PUBLIC __attribute__((visibility("default")))
-#define contact_sensors_broadcaster_LOCAL __attribute__((visibility("hidden")))
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC __attribute__((visibility("default")))
+#define CONTACT_SENSORS_BROADCASTER_LOCAL __attribute__((visibility("hidden")))
 #else
-#define contact_sensors_broadcaster_PUBLIC
-#define contact_sensors_broadcaster_LOCAL
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC
+#define CONTACT_SENSORS_BROADCASTER_LOCAL
 #endif
-#define contact_sensors_broadcaster_PUBLIC_TYPE
+#define CONTACT_SENSORS_BROADCASTER_PUBLIC_TYPE
 #endif
 
-#endif  // contact_sensors_broadcaster__VISIBILITY_CONTROL_H_
+#endif  // CONTACT_SENSORS_BROADCASTER__VISIBILITY_CONTROL_H_
