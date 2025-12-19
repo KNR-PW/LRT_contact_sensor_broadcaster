@@ -60,11 +60,15 @@ contact_sensors_broadcaster:
     sensor_names:
     - arm_contact_sensor
     - foot_contact_sensor
+  interface_postfix: "contact"
+  publish_with_change: true
 ...
 ```
 
 #### `frame_ids` - name of frames, where contact sensor is defined
-#### `sensor_names` - name of contact sensors 
+#### `sensor_names` - Name of contact sensors 
+#### `interface_postfix` - Optional, name of the contact state interface. Default: `contact`.  
+#### `publish_with_change` - Optional, publish message only when one of contact states changes. Default: `false`
 
 ### :warning: IMPORTANT: SENSOR NAMES HAVE TO BE SAME AS IN `ros2_control` TAG AND `gazebo reference` TAG FOR THIS SENSORS ([example](https://github.com/KNR-PW/LRT_gz_ros2_control/blob/contact_sensor/gz_ros2_control_demos/urdf/test_contact_sensor.xacro.urdf))
 
