@@ -28,7 +28,7 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   params_ = param_listener_->get_params();
-
+  
   if (params_.interface_postfix.empty())
   {
     RCLCPP_INFO(
@@ -86,6 +86,7 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
   }
 
   realtime_publisher_->lock();
+  realtime_publisher_->msg_.contacts.resize(sensor_number_);
   for(size_t i = 0; i < sensor_number_; ++i)
   {
     realtime_publisher_->msg_.contacts[i].header.frame_id = params_.frame_ids[i];
