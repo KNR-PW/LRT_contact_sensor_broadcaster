@@ -9,7 +9,7 @@ contact_sensors_broadcaster:
   }
   sensor_names: {
     type: string_array,
-    description: "Name of the sensors used as prefix for interfaces ``<sensor_name>/<interface_postfix>``",
+    description: "Name of the sensors used as prefix for interfaces ``<sensor_name>/<interface_postfix>``.",
     validation: {
       unique<>: null,
       not_empty<>: null,
@@ -18,8 +18,13 @@ contact_sensors_broadcaster:
   interface_postfix: {
     type: string,
     default_value: "contact",
-    description: "Optional: name of the contact state interface
+    description: "Optional: name of the contact state interface.
     If not used, interface name will be ``contact``",
+  }
+  publish_with_change: {
+    type: bool,
+    default_value: false,
+    description: "Optional: publish message only when one of contact states changes.",
   }
 
     
