@@ -21,5 +21,10 @@ contact_sensors_broadcaster:
     description: "Optional: name of the contact state interface
     If not used, interface name will be ``contact``",
   }
+  publish_with_change: {
+    type: bool,
+    default_value: false,
+    description: "Optional: publish message only when one of contact states changes",
+  }
 
     

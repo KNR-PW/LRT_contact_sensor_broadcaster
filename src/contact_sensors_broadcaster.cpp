@@ -36,6 +36,14 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
       "'interface_postfix' not defined, name 'contact' is used.");
   }
 
+  if(params_.publish_with_change)
+  {
+    RCLCPP_INFO(
+      get_node()->get_logger(),
+      "'publish_with_change' is 'true', message published only "
+      "when one of contact states is changed.");
+  }
+
   if (params_.sensor_names.empty())
   {
     RCLCPP_ERROR(
@@ -146,13 +154,36 @@ controller_interface::return_type ContactSensorsBroadcaster::update(
 {
   if (realtime_publisher_ && realtime_publisher_->trylock())
   {
+    bool changedState = false;
     for(size_t i = 0; i < sensor_number_; ++i)
     {
       bool newFlag = contact_sensors_[i]->get_contact_flag();
+
+      // Check if any flags changed 
+      if(realtime_publisher_->msg_.contacts[i].contact != newFlag && !changedState)
+      {
+        changedState = true;
+      }
+
       realtime_publisher_->msg_.contacts[i].contact = newFlag;
       realtime_publisher_->msg_.contacts[i].header.stamp = time;
     }
-    realtime_publisher_->unlockAndPublish();
+
+    if(params_.publish_with_change)
+    {
+      if(changedState)
+      {
+        realtime_publisher_->unlockAndPublish();
+      }
+      else
+      {
+        realtime_publisher_->unlock();
+      }
+    }
+    else
+    {
+      realtime_publisher_->unlockAndPublish();
+    }
   }
   
   return controller_interface::return_type::OK;
