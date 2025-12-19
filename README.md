@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project provides a `ros2_control` `ControllerInterface` used to publish [`contact_msgs/Contact.msg`](https://github.com/BartlomiejK2/contact_msgs/blob/main/msg/Contact.msg) messages for every contact sensor, using one state interface for every sensor, where interface values are defined as:
+This project provides a `ros2_control` `ControllerInterface` used to publish [`contact_msgs/Contacts.msg`](https://github.com/BartlomiejK2/contact_msgs/blob/main/msg/Contacts.msg) messages for every contact sensor, using one state interface for every sensor, where interface values are defined as:
 
 `0.0` - no contact between contact sensor and unknown object (false)
 
@@ -10,10 +10,10 @@ This project provides a `ros2_control` `ControllerInterface` used to publish [`c
 
 For example check out our fork of [gz_ros2_control](https://github.com/KNR-PW/LRT_gz_ros2_control/tree/contact_sensor).
 
-Broadcaster publishes messages on topics defined as:
+Broadcaster publishes message with contact states on topic defined as:
 
 ```
-'contact_sensor_frame_id'/contact
+contact_sensor_broadcaster/contact_states
 ```
 
 ## ROS 2 version
