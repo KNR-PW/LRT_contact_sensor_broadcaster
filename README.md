@@ -42,7 +42,7 @@ rosdep install --ignore-src --from-paths . -y -r
 ```
 5. Build:
 ```bash
-colcon b
+colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 
 ## Controller parameters (example):
