@@ -14,6 +14,60 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_init()
   {
     param_listener_ = std::make_shared<ParamListener>(get_node());
     params_ = param_listener_->get_params();
+
+    if (params_.interface_postfix.empty())
+    {
+      RCLCPP_INFO(
+        get_node()->get_logger(),
+        "'interface_postfix' not defined, name 'contact' is used.");
+    }
+
+    if(params_.publish_with_change)
+    {
+      RCLCPP_INFO(
+        get_node()->get_logger(),
+        "'publish_with_change' is 'true', message published only "
+        "when one of contact states is changed.");
+    }
+
+    if (params_.sensor_names.empty())
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "'sensor_names' needs to be defined!");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    if (params_.frame_ids.empty())
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "'frame_ids' needs to be defined!");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    if (params_.sensor_names.size() != params_.frame_ids.size())
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "both 'sensor_name' and "
+        "'frame_ids' parameters needs to have same size!");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    if (params_.publish_with_change && params_.publish_idle_interval_seconds < 0.0)
+    {
+      RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "publish_idle_interval_seconds' and "
+        "must be positive!");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+    else
+    {
+      publish_idle_duration_ = rclcpp::Duration::from_seconds(
+        params_.publish_idle_interval_seconds);
+    }
   }
   catch (const std::exception & e)
   {
@@ -27,48 +81,6 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_init()
 controller_interface::CallbackReturn ContactSensorsBroadcaster::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  params_ = param_listener_->get_params();
-  
-  if (params_.interface_postfix.empty())
-  {
-    RCLCPP_INFO(
-      get_node()->get_logger(),
-      "'interface_postfix' not defined, name 'contact' is used.");
-  }
-
-  if(params_.publish_with_change)
-  {
-    RCLCPP_INFO(
-      get_node()->get_logger(),
-      "'publish_with_change' is 'true', message published only "
-      "when one of contact states is changed.");
-  }
-
-  if (params_.sensor_names.empty())
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "'sensor_names' needs to be defined!");
-    return controller_interface::CallbackReturn::ERROR;
-  }
-
-  if (params_.frame_ids.empty())
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "'frame_ids' needs to be defined!");
-    return controller_interface::CallbackReturn::ERROR;
-  }
-
-  if (params_.sensor_names.size() != params_.frame_ids.size())
-  {
-    RCLCPP_ERROR(
-      get_node()->get_logger(),
-      "both 'sensor_name' and "
-      "'frame_ids' parameters needs to have same size!");
-    return controller_interface::CallbackReturn::ERROR;
-  }
-
   sensor_number_ = params_.sensor_names.size();
 
   for(size_t i = 0; i < sensor_number_; ++i)
@@ -136,6 +148,8 @@ controller_interface::CallbackReturn ContactSensorsBroadcaster::on_activate(
   {
     contact_sensor->assign_loaned_state_interfaces(state_interfaces_);
   }
+
+  last_publish_idle_time_ = this->get_node()->get_clock()->now();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -154,26 +168,28 @@ controller_interface::return_type ContactSensorsBroadcaster::update(
 {
   if (realtime_publisher_ && realtime_publisher_->trylock())
   {
-    bool changedState = false;
+    bool changed_state = false;
     for(size_t i = 0; i < sensor_number_; ++i)
     {
-      bool newFlag = contact_sensors_[i]->get_contact_flag();
+      bool new_flag = contact_sensors_[i]->get_contact_flag();
 
       // Check if any flags changed 
-      if(realtime_publisher_->msg_.contacts[i].contact != newFlag && !changedState)
+      if(realtime_publisher_->msg_.contacts[i].contact != new_flag && !changed_state)
       {
-        changedState = true;
+        changed_state = true;
       }
 
-      realtime_publisher_->msg_.contacts[i].contact = newFlag;
+      realtime_publisher_->msg_.contacts[i].contact = new_flag;
       realtime_publisher_->msg_.contacts[i].header.stamp = time;
     }
 
     if(params_.publish_with_change)
     {
-      if(changedState)
+      const auto current_time = this->get_node()->get_clock()->now();
+      if(changed_state || (current_time - last_publish_idle_time_) > publish_idle_duration_)
       {
         realtime_publisher_->unlockAndPublish();
+        last_publish_idle_time_ = current_time;
       }
       else
       {

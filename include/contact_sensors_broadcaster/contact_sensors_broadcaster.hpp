@@ -71,6 +71,9 @@ protected:
 
   size_t sensor_number_;
 
+  rclcpp::Time last_publish_idle_time_;
+  rclcpp::Duration publish_idle_duration_ = rclcpp::Duration(0, 0);
+
   using StatePublisher = rclcpp::Publisher<contact_msgs::msg::Contacts>;
   using RealTimeStatePublisher = realtime_tools::RealtimePublisher<contact_msgs::msg::Contacts>;
   using ContactSensor = std::unique_ptr<semantic_components::ContactSensor>;

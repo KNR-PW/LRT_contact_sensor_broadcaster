@@ -26,5 +26,10 @@ contact_sensors_broadcaster:
     default_value: false,
     description: "Optional: publish message only when one of contact states changes.",
   }
+  publish_idle_interval_seconds: {
+    type: double,
+    default_value: 5.0,
+    description: "Optional: when `publish_with_change` is active, it publishes data after this when there was no change.",
+  }
 
     
